@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	//	"fmt"
-
+	"fmt"
 	"log"
 
 	"github.com/MiguelVRRL/nomangas/utils"
@@ -11,13 +10,22 @@ import (
 
 
 var downloadCmd = &cobra.Command{
-	Use:   "download",
+	Use:   "download [name] [num of each chapter to download]",
 	Short: "the command to download the chapter of anything manga",
-  Args: cobra.MinimumNArgs(2),
   Long: ``,
+  Args: func(_ *cobra.Command, args []string) error {
+    if len(args) < 2 {
+      return fmt.Errorf("Introduce minimum 2 args; actual args: %d", len(args))
+    }
+    if len(args) > 10 {
+      return fmt.Errorf("Maximum of chapter to download is 10")
+    }
+    return nil
+  },
+
   SuggestionsMinimumDistance: 3,
 	Run: func(cmd *cobra.Command, args []string) {
-    if err := utils.Search(); err != nil {
+    if err := utils.Search(args); err != nil {
       log.Printf("Error: %s", err.Error())
     }
 	},
