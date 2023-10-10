@@ -17,7 +17,7 @@ var downloadCmd = &cobra.Command{
     if len(args) < 2 {
       return fmt.Errorf("Introduce minimum 2 args; actual args: %d", len(args))
     }
-    if len(args) > 10 {
+    if len(args) > 100 {
       return fmt.Errorf("Maximum of chapter to download is 10")
     }
     return nil
@@ -28,6 +28,7 @@ var downloadCmd = &cobra.Command{
     if err := utils.Search(args); err != nil {
       log.Printf("Error: %s", err.Error())
     }
+    log.Println("Manga Downloaded")
 	},
 }
 
