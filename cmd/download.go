@@ -24,11 +24,12 @@ var downloadCmd = &cobra.Command{
   },
 
   SuggestionsMinimumDistance: 3,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
     if err := utils.Search(args); err != nil {
       log.Printf("Error: %s", err.Error())
-    }
+    } else {
     log.Println("Manga Downloaded")
+    }
 	},
 }
 
