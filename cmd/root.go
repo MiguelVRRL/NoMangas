@@ -1,11 +1,10 @@
-
 package cmd
 
 import (
+	"log"
 	"os"
-  "fmt"
 
-  "github.com/MiguelVRRL/nomangas/utils"
+	"github.com/MiguelVRRL/nomangas/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +16,10 @@ var rootCmd = &cobra.Command{
 	Short: "A brief description of your application",
   Long: ``,
 
-	Run: func(cmd *cobra.Command, args []string) {
-    fmt.Println(utils.List)
+	Run: func(_ *cobra.Command, _ []string) {
+    if err := utils.List(); err != nil {
+      log.Fatal(err.Error())
+    }
   },
 }
 

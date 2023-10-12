@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"log"
 
-  "github.com/MiguelVRRL/nomangas/utils"
+	"github.com/MiguelVRRL/nomangas/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -12,9 +13,11 @@ var readCmd = &cobra.Command{
 	Short: "A brief description of your command",
   Long: ``,
   SuggestionsMinimumDistance: 3,
-
-	Run: func(cmd *cobra.Command, args []string) {
-		utils.ReadMangas()
+  Args: cobra.MaximumNArgs(2),
+	Run: func(_ *cobra.Command, args []string) {
+    if err := utils.ReadMangas(args[0],args[1]); err != nil {
+      log.Fatal(err.Error())
+    }
 	},
 }
 

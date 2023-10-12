@@ -8,12 +8,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var limit bool
 
 var downloadCmd = &cobra.Command{
 	Use:   "download [name] [num of each chapter to download]",
 	Short: "the command to download the chapter of anything manga",
   Long: ``,
   Args: func(_ *cobra.Command, args []string) error {
+    if limit {
+      return nil
+    }
     if len(args) < 2 {
       return fmt.Errorf("Introduce minimum 2 args; actual args: %d", len(args))
     }
@@ -35,4 +39,5 @@ var downloadCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(downloadCmd)
+  downloadCmd.PersistentFlags().BoolVarP(&limit, "limit","l", false, "flag to remove the limit of download")
 }

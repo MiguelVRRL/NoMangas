@@ -1,9 +1,9 @@
 package utils
 
-import (
-  "fmt"
-)
+import "os/exec"
 
-func List () string {
-  return fmt.Sprintf("list of mangas downloaded")
+
+func List () (error) {
+  cmd := exec.Command("ls", Dir)
+  return cmd.Run()
 }

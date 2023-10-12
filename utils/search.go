@@ -3,16 +3,32 @@ package utils
 import (
 	"errors"
 	"io"
+  "os"
 	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gocolly/colly"
 	"github.com/signintech/gopdf"
+	"github.com/spf13/viper"
 )
-var rect = gopdf.Rect{H:3371,W:1000}
+
+func init() {
+  viper.SetConfigFile(".env")
+  viper.ReadInConfig()
+  Dir = viper.GetString("DIR")
+  if _, err := os.Stat(Dir); err != nil {
+    if os.IsNotExist(err) {
+      if err := os.MkdirAll(Dir, 0750); err != nil {
+        log.Fatal("We couldn't create the Dir")
+      }
+    } 
+  }
+}
 var cap_page string = "https://leermanga.net/capitulo/"
 var menu_page string = "https://leermanga.net/manga/"
+var Dir string
+
 
 func Search(args []string) error {
   name, chapters := args[0],args[1:]
@@ -27,7 +43,7 @@ func Search(args []string) error {
       return err
     }
   }
-  log.Printf("manga Downloaded at %s\n", "dir")
+  log.Printf("manga Downloaded at %s\n", Dir)
 
   return nil
 }
@@ -36,27 +52,24 @@ func Search(args []string) error {
 func Download(collyC *colly.Collector,name string, chapter string) error  {
   var imageListChapter []string
   var manwha string
-  c := colly.NewCollector()
   collyC.OnHTML(".lazyload", func(e *colly.HTMLElement) { 
     listLinks := strings.Split(e.Attr("data-src"),"\n")
     imageListChapter = append(imageListChapter, listLinks...)
   })
   collyC.Visit(cap_page+name+"-"+chapter+".00")
-  c.OnHTML(".manga-title-info",func(e *colly.HTMLElement) { 
-    if e.Text == "Manwha" {
+  collyC.OnHTML(".manga-title-info",func(e *colly.HTMLElement) { 
+    if e.Text == "Manhwa" {
       manwha = e.Text
     }
   }) 
-  c.Visit(menu_page+name)
+  collyC.Visit(menu_page+name)
   if len(imageListChapter) == 0 {
     return errors.New("Manga not found.")
   }
   if manwha == "Manhwa" {
-    if err := ImageToPDF(name,chapter,imageListChapter,gopdf.Rect{H:5600.00,W:100.00}); err != nil {
-      return err   
-    } 
+    return errors.New("there is no support to Manhwas (coming soon).")
   } else {
-    if err := ImageToPDF(name,chapter,imageListChapter,*gopdf.PageSizeLetter); err != nil {
+    if err := ImageToPDF(name,chapter,imageListChapter); err != nil {
       return err   
     }
   }
@@ -64,11 +77,9 @@ func Download(collyC *colly.Collector,name string, chapter string) error  {
 }
 
 
-func ImageToPDF(name,chapter string ,links []string, rect gopdf.Rect) error {
+func ImageToPDF(name,chapter string ,links []string) error {
   pdf := gopdf.GoPdf{}
-  pdf.Start(gopdf.Config{PageSize: rect})  
-  x :=1.00
-  y :=1.00
+  pdf.Start(gopdf.Config{PageSize: *gopdf.PageSizeLetter})  
   pdf.AddPage()
   for i := 0; i < len(links); i++ {
     imageBytes,err := DownloadFile(links[i])
@@ -79,12 +90,12 @@ func ImageToPDF(name,chapter string ,links []string, rect gopdf.Rect) error {
     if err != nil {
       return err
     }
-    pdf.ImageByHolder(b, x, y, &rect)
+    pdf.ImageByHolder(b, 0, 0, gopdf.PageSizeLetter)
     pdf.AddPage()
   }
   
 
-	pdf.WritePdf("./"+name+"-capitulo-"+chapter+".00"+".pdf")
+	pdf.WritePdf(Dir+name+"-capitulo-"+chapter+".00"+".pdf")
   
   return nil
 }
