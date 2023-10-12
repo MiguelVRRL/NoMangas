@@ -19,7 +19,7 @@ func init() {
   Dir = viper.GetString("DIR")
   if _, err := os.Stat(Dir); err != nil {
     if os.IsNotExist(err) {
-      if err := os.MkdirAll(Dir, 0750); err != nil {
+      if err := os.Mkdir(Dir,os.ModePerm); err != nil {
         log.Fatal("We couldn't create the Dir")
       }
     } 
