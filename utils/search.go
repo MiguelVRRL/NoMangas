@@ -3,32 +3,32 @@ package utils
 import (
 	"errors"
 	"io"
-  "os"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gocolly/colly"
 	"github.com/signintech/gopdf"
-	"github.com/spf13/viper"
 )
 
 func init() {
-  viper.SetConfigFile(".env")
-  viper.ReadInConfig()
-  Dir = viper.GetString("DIR")
-  if _, err := os.Stat(Dir); err != nil {
+  Home, _ = os.UserHomeDir()
+  Home += "/mangas/"
+  if _, err := os.Stat(Home); err != nil {
     if os.IsNotExist(err) {
-      if err := os.Mkdir(Dir,os.ModePerm); err != nil {
+      if err := os.Mkdir(Home,os.ModePerm); err != nil {
+        log.Println(err.Error())
         log.Fatal("We couldn't create the Dir")
       }
     } 
   }
 }
-var cap_page string = "https://leermanga.net/capitulo/"
-var menu_page string = "https://leermanga.net/manga/"
-var Dir string
-
+var (
+cap_page string = "https://leermanga.net/capitulo/"
+menu_page string = "https://leermanga.net/manga/"
+Home string  
+)
 
 func Search(args []string) error {
   name, chapters := args[0],args[1:]
@@ -43,7 +43,7 @@ func Search(args []string) error {
       return err
     }
   }
-  log.Printf("manga Downloaded at %s\n", Dir)
+  log.Printf("manga Downloaded at %s\n", Home)
 
   return nil
 }
@@ -95,7 +95,7 @@ func ImageToPDF(name,chapter string ,links []string) error {
   }
   
 
-	pdf.WritePdf(Dir+name+"-capitulo-"+chapter+".00"+".pdf")
+	pdf.WritePdf(Home+name+"-capitulo-"+chapter+".00"+".pdf")
   
   return nil
 }

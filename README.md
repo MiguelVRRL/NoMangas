@@ -3,7 +3,7 @@
 
 ## Installation
  ```
-go install https://github.com/MiguelVRRL/NoMangas
+go install https://github.com/MiguelVRRL/NoMangas@latest
  ```
 ## Examples of use
 
@@ -27,3 +27,4 @@ For reading your mangas using the CLI. usage
 ```
 nomangas read [name of manga] [cap]
 ```
+### ChangeDir

@@ -6,7 +6,6 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/signintech/gopdf v0.19.0
 	github.com/spf13/cobra v1.7.0
-	github.com/spf13/viper v1.17.0
 )
 
 require (
